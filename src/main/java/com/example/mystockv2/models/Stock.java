@@ -21,4 +21,6 @@ public class Stock {
     Long id;
     @Column(name = "name")
     String name;
+    @Column(name = "quantity")
+    int quantity;
 }

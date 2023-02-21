@@ -10,6 +10,9 @@ import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class MoveService {
@@ -19,7 +22,7 @@ public class MoveService {
 
     // Сделать проверку на количество товара на складе перед перемещением!!!
 
-
+    @Transactional
     public Move addMoving(Move move) throws NotFoundException {
         Move result = new Move();
 
@@ -33,6 +36,17 @@ public class MoveService {
                 .getId()).orElseThrow(() -> new NotFoundException("This stock_to not found"));
 
 
+        int quantityOnStock = stockRepo.findByQuantityId(move.getStockFrom().getId())
+                .orElseThrow(() -> new NotFoundException("Товара на складе не хватает")).getQuantity();
 
+        int quantityMove = move.getQuantity();
+
+        if (quantityOnStock < quantityMove) {
+            throw new NotFoundException("Товара на складе не хватает");
+        }
+
+        result = moveRepo.save(move);
+
+        return result;
     }
 }

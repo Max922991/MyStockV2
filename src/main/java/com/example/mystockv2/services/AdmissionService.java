@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,15 +26,22 @@ public class AdmissionService {
     public Admission addAdmission(Admission admission) throws NotFoundException {
         Admission result = new Admission();
 
-        Product product = productRepo.findById(admission.getProduct().getId())
-                .orElseThrow(() -> new NotFoundException("This product not found"));
-
         Stock stock = stockRepo.findById(admission.getStock()
                 .getId()).orElseThrow(() -> new NotFoundException("This stock not found"));
+        List<Long> productId = new ArrayList<>();
+        for (Product product : admission.getProducts()){
+            Long id = product.getId();
+            productId.add(id);
+        }
+        List<Product> productList = productRepo.findAllById(productId);
+
+        if (productList.size() != admission.getProducts().size()){
+            throw new NotFoundException("One or more products not found!");
+        }
 
         result.setStock(stock);
         result.setQuantity(admission.getQuantity());
-        result.setProduct(product);
+        result.setProducts(productList);
         result.setPurchasePrice(admission.getPurchasePrice());
         admissionRepo.save(result);
 

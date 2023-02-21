@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Поступление (Номер, Склад, Список товаров). Заводится при поступлении товара.
@@ -28,8 +29,8 @@ public class Admission {
     Integer purchasePrice;
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     Stock stock;
-    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    Product product;
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    List<Product> products;
 
 
 }

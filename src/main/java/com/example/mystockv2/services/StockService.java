@@ -5,6 +5,8 @@ import com.example.mystockv2.repositories.StockRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class StockService {
@@ -20,6 +22,10 @@ public class StockService {
 
     public Stock findById(Long id) {
         return stockRepo.findById(id).orElse(null);
+    }
+
+    public List<Stock> findAllStocks() {
+        return stockRepo.findAll();
     }
 
 }
